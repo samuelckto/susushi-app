@@ -20,13 +20,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            /* Fondo con degradado profundo inspirado en sushi */
             background: radial-gradient(circle at top left, #2d3436, #1a1a1a);
             font-family: 'Inter', -apple-system, sans-serif;
             overflow: hidden;
         }
 
-        /* Decoración de fondo (Círculos difusos) */
         .bg-shape {
             position: absolute;
             z-index: -1;
@@ -131,10 +129,6 @@
             filter: brightness(1.1);
         }
 
-        .btn-login:active {
-            transform: translateY(-1px);
-        }
-
         .footer {
             margin-top: 30px;
             color: #7f8c8d;
@@ -153,13 +147,13 @@
         
         <form action="/login" method="POST">
             <div class="input-group">
-                <label for="sucursal">Sucursal o Usuario</label>
-                <input type="text" id="sucursal" name="sucursal" placeholder="Ej: Morelos o marcos" required autocomplete="off">
+                <label for="sucursal">USUARIO</label>
+                <input type="text" id="sucursal" name="sucursal" required autocomplete="off">
             </div>
             
             <div class="input-group">
                 <label for="password">Contraseña</label>
-                <input type="password" id="password" name="password" placeholder="••••••••" required>
+                <input type="password" id="password" name="password" required>
             </div>
             
             <button type="submit" class="btn-login">Entrar al Sistema</button>
