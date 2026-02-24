@@ -6,13 +6,18 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "supersecretkey")
 
 # =========================
-# CONFIGURACIÓN BASE DATOS
+# VARIABLES DE ENTORNO
 # =========================
 
 DB_HOST = os.getenv("DB_HOST")
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_NAME = os.getenv("DB_NAME")
+DB_PORT = int(os.getenv("DB_PORT", 3306))
+
+# =========================
+# CONEXIÓN A MYSQL
+# =========================
 
 def get_connection():
     return pymysql.connect(
@@ -20,6 +25,7 @@ def get_connection():
         user=DB_USER,
         password=DB_PASSWORD,
         database=DB_NAME,
+        port=DB_PORT,
         cursorclass=pymysql.cursors.DictCursor
     )
 
@@ -35,7 +41,7 @@ def login():
 
         connection = get_connection()
         with connection.cursor() as cursor:
-            sql = "SELECT * FROM usuarios WHERE username=%s AND password=%s"
+            sql = "SELECT * FROM usuarios WHERE username=%s AND password_hash=%s"
             cursor.execute(sql, (username, password))
             user = cursor.fetchone()
         connection.close()
@@ -48,7 +54,6 @@ def login():
 
     return render_template("login.html")
 
-
 # =========================
 # DASHBOARD
 # =========================
@@ -59,7 +64,6 @@ def dashboard():
         return redirect("/")
     return render_template("dashboard.html")
 
-
 # =========================
 # LOGOUT
 # =========================
@@ -69,11 +73,10 @@ def logout():
     session.clear()
     return redirect("/")
 
-
 # =========================
-# IMPORTANTE PARA RENDER
+# RENDER PORT FIX
 # =========================
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port))
+    app.run(host="0.0.0.0", port=port)
