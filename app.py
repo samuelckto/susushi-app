@@ -33,6 +33,7 @@ def get_connection():
 # LOGIN
 # =========================
 
+@app.route("/login", methods=["GET", "POST"])
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -61,7 +62,7 @@ def login():
 @app.route("/dashboard")
 def dashboard():
     if "user" not in session:
-        return redirect("/")
+        return redirect("/login")
     return render_template("dashboard.html")
 
 # =========================
@@ -71,10 +72,10 @@ def dashboard():
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect("/")
+    return redirect("/login")
 
 # =========================
-# RENDER PORT FIX
+# RENDER PORT
 # =========================
 
 if __name__ == "__main__":
