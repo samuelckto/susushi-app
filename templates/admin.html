@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SUSUSHI - Panel Admin</title>
+    <style>
+        :root { --primary: #e74c3c; --bg: #121212; --card: #1e1e1e; --text: #f0f0f0; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); padding: 20px; }
+        .card { background: var(--card); padding: 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        h2 { color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; }
+        input, select { padding: 10px; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; margin: 5px; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; color: white; }
+        .btn-view { background: #3498db; text-decoration: none; font-size: 0.9em; }
+        .btn-del { background: #c0392b; text-decoration: none; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div style="max-width: 1000px; margin: auto;">
+        <h1>Dashboard SUSUSHI 🍣</h1>
+        
+        <div class="card">
+            <h2>👥 Usuarios y Sucursales</h2>
+            <form action="/admin/crear-usuario" method="POST">
+                <input type="text" name="username" placeholder="Usuario" required>
+                <input type="password" name="password" placeholder="Pass" required>
+                <input type="text" name="nombre_sucursal" placeholder="Nombre Sucursal" required>
+                <select name="rol"><option value="sucursal">Sucursal</option><option value="admin">Admin</option></select>
+                <button type="submit" class="btn" style="background: #27ae60;">Crear Acceso</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>➕ Nuevo Producto</h2>
+            <form action="/admin/agregar" method="POST">
+                <input type="text" name="nombre" placeholder="Nombre (ej. Arroz)" required>
+                <input type="text" name="unidad" placeholder="Unidad (kg, pza)" required>
+                <select name="categoria"><option value="Insumos">Insumos</option><option value="Proteína">Proteína</option><option value="Vegetal">Vegetal</option></select>
+                <button type="submit" class="btn" style="background: var(--primary);">Agregar</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>📄 Reportes de Pedidos</h2>
+            <table>
+                <thead><tr><th>Fecha/Hora</th><th>Archivo</th><th>Acciones</th></tr></thead>
+                <tbody>
+                    {% for p in pedidos %}
+                    <tr>
+                        <td>{{ p.fecha_str }}</td>
+                        <td>{{ p.nombre }}</td>
+                        <td>
+                            <a href="/admin/ver/{{ p.nombre }}" target="_blank" class="btn btn-view">Abrir PDF</a>
+                            <a href="/admin/eliminar-reporte/{{ p.nombre }}" class="btn btn-del" onclick="return confirm('¿Borrar?')">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <a href="/salir" style="color: #888;">Cerrar Sesión</a>
+    </div>
+</body>
+</html>

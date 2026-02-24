@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUSUSHI - Levantar Pedido</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        :root { 
+            --primary: #e74c3c; 
+            --success: #27ae60; 
+            --bg: #f0f2f5; 
+            --dark: #2c3e50; 
+            --white: #ffffff;
+        }
+        
+        body { 
+            font-family: 'Inter', -apple-system, system-ui, sans-serif; 
+            background: var(--bg); 
+            color: var(--dark); 
+            margin: 0; 
+            padding: 40px 20px; 
+            display: flex;
+            justify-content: center;
+        }
+
+        .order-card { 
+            max-width: 900px; 
+            width: 100%;
+            background: var(--white); 
+            padding: 40px; 
+            border-radius: 24px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05); 
+        }
+
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start; 
+            border-bottom: 2px solid #f1f1f1; 
+            padding-bottom: 25px; 
+            margin-bottom: 30px; 
+        }
+
+        .header-titles h2 { 
+            margin: 0; 
+            color: var(--primary); 
+            font-size: 2em; 
+            letter-spacing: -1px; 
+        }
+
+        .header-titles p { 
+            margin: 5px 0 0; 
+            color: #95a5a6; 
+            font-weight: 500; 
+        }
+
+        .branch-badge { 
+            background: var(--dark); 
+            color: white; 
+            padding: 8px 16px; 
+            border-radius: 50px; 
+            font-size: 0.85em; 
+            font-weight: 600; 
+            text-transform: uppercase;
+        }
+
+        /* Tabla Estilizada */
+        table { width: 100%; border-collapse: collapse; }
+        
+        th { 
+            text-align: left; 
+            padding: 15px; 
+            color: #bdc3c7; 
+            font-size: 0.75em; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+
+        td { 
+            padding: 20px 15px; 
+            border-bottom: 1px solid #f8f9fa; 
+            transition: background 0.2s;
+        }
+
+        tr:hover td { background: #fafafa; }
+
+        .prod-info b { font-size: 1.1em; display: block; color: #34495e; }
+        .prod-info span { font-size: 0.85em; color: #95a5a6; }
+
+        .cat-pill { 
+            font-size: 0.7em; 
+            padding: 5px 12px; 
+            border-radius: 6px; 
+            background: #f1f3f5; 
+            color: #495057; 
+            font-weight: 700;
+        }
+
+        /* Inputs Modernos */
+        .input-wrapper { display: flex; align-items: center; gap: 10px; }
+        
+        input[type="number"] { 
+            width: 90px; 
+            padding: 12px; 
+            border: 2px solid #edf2f7; 
+            border-radius: 12px; 
+            font-size: 1em; 
+            font-weight: 600;
+            color: var(--dark);
+            transition: all 0.3s;
+        }
+
+        input[type="number"]:focus { 
+            outline: none; 
+            border-color: var(--primary); 
+            background: #fffafa;
+        }
+
+        .unit-label { font-size: 0.9em; font-weight: 600; color: #7f8c8d; }
+
+        /* Área de Observaciones */
+        .obs-section { margin-top: 30px; }
+        .obs-section label { 
+            display: block; 
+            margin-bottom: 10px; 
+            font-weight: 600; 
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .obs-area { 
+            width: 100%; 
+            height: 120px; 
+            padding: 20px; 
+            border: 2px solid #edf2f7; 
+            border-radius: 18px; 
+            box-sizing: border-box; 
+            font-family: inherit; 
+            font-size: 1em;
+            resize: none; 
+            transition: border-color 0.3s;
+        }
+
+        .obs-area:focus { outline: none; border-color: var(--primary); }
+
+        .btn-confirm { 
+            width: 100%; 
+            padding: 22px; 
+            background: var(--success); 
+            color: white; 
+            border: none; 
+            border-radius: 18px; 
+            font-size: 1.15em; 
+            font-weight: 800; 
+            cursor: pointer; 
+            margin-top: 35px; 
+            box-shadow: 0 10px 20px rgba(39, 174, 96, 0.2);
+            transition: all 0.3s;
+        }
+
+        .btn-confirm:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 15px 30px rgba(39, 174, 96, 0.3);
+            background: #219150;
+        }
+
+        .btn-confirm:active { transform: translateY(-1px); }
+
+    </style>
+</head>
+<body>
+    <div class="order-card">
+        <div class="header">
+            <div class="header-titles">
+                <h2>Levantar Pedido 🍣</h2>
+                <p>Completa las cantidades faltantes</p>
+            </div>
+            <span class="branch-badge">{{ sucursal }}</span>
+        </div>
+
+        <form action="/enviar-pedido" method="POST">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Insumo</th>
+                        <th>Categoría</th>
+                        <th>Cantidad Faltante</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in productos %}
+                    <tr>
+                        <td class="prod-info">
+                            <b>{{ p.nombre }}</b>
+                            <span>ID: {{ p.id }}</span>
+                        </td>
+                        <td><span class="cat-pill">{{ p.categoria }}</span></td>
+                        <td>
+                            <div class="input-wrapper">
+                                <input type="number" name="prod_{{ p.id }}" step="0.1" min="0" placeholder="0.0">
+                                <span class="unit-label">{{ p.unidad_medida }}</span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="obs-section">
+                <label>Notas adicionales para Marcos</label>
+                <textarea name="observaciones" class="obs-area" placeholder="¿Alguna instrucción especial o detalle sobre la entrega?"></textarea>
+            </div>
+
+            <button type="submit" class="btn-confirm">Confirmar y Enviar Pedido</button>
+        </form>
+    </div>
+</body>
+</html>
